@@ -5,6 +5,12 @@ from src.core.model_registry import model_registry
 
 app = FastAPI(title="EvalOps-Lite", version="1.0.0")
 
+from fastapi.responses import RedirectResponse
+
+@app.get("/", include_in_schema=False)
+def root():
+    # Redirect root to Swagger UI so recruiters instantly see the product
+    return RedirectResponse(url="/docs")
 
 class PredictRequest(BaseModel):
     text: str
