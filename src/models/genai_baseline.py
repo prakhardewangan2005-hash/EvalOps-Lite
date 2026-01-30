@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict
 
+
 @dataclass
 class GenAIConfig:
     temperature: float = 0.7
@@ -9,9 +10,8 @@ class GenAIConfig:
 
 class GenAIBaseline:
     """
-    Lightweight GenAI-style baseline.
-    Simulates LLM reasoning without heavy model dependencies.
-    Production-safe for free-tier deployment.
+    Lightweight GenAI-inspired baseline (no heavy deps).
+    Produces score + explanation for demo/eval usage.
     """
 
     def __init__(self, config: GenAIConfig = GenAIConfig()):
@@ -19,26 +19,32 @@ class GenAIBaseline:
 
     def predict(self, text: str) -> Dict:
         score = self._heuristic_score(text)
-
         return {
             "input": text,
             "genai_score": score,
-            "confidence": min(0.95, 0.5 + score),
+            "confidence": min(0.95, 0.45 + score),
             "explanation": self._explain(score),
-            "model_type": "lightweight-genai-baseline"
+            "model_type": "lightweight-genai-baseline",
         }
 
     def _heuristic_score(self, text: str) -> float:
-        length_factor = min(len(text) / 200, 1.0)
-        keyword_factor = any(
-            kw in text.lower()
-            for kw in ["good", "excellent", "positive", "secure", "efficient"]
-        )
-        return round(0.4 * length_factor + (0.6 if keyword_factor else 0.2), 2)
+        t = (text or "").strip().lower()
+        length_factor = min(len(t) / 200, 1.0)
+
+        positive = any(k in t for k in ["good", "excellent", "positive", "secure", "efficient"])
+        negative = any(k in t for k in ["bad", "poor", "negative", "unsafe", "slow"])
+
+        base = 0.25 + 0.55 * length_factor
+        if positive:
+            base += 0.2
+        if negative:
+            base -= 0.2
+
+        return round(max(0.0, min(1.0, base)), 2)
 
     def _explain(self, score: float) -> str:
-        if score > 0.7:
-            return "High-quality semantic signal detected via heuristic reasoning."
-        elif score > 0.4:
-            return "Moderate semantic alignment detected."
-        return "Low semantic alignment detected."
+        if score >= 0.75:
+            return "High semantic signal detected via lightweight reasoning heuristics."
+        if score >= 0.45:
+            return "Moderate semantic signal detected."
+        return "Low semantic signal detected."
