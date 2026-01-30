@@ -1,5 +1,6 @@
 # 🚀 EvalOps-Lite — GenAI Evaluation & Prediction Service
 **Production-ready GenAI inference + EvalOps microservice built with FastAPI, designed to demonstrate ML systems thinking, API design, deployment, evaluation workflows, and MLOps fundamentals. Built for extreme shortlisting (top 0.005%), not a toy demo.**
+
 ✅ Live ✅ Containerized ✅ CI/CD-ready ✅ Recruiter-friendly Swagger UI ✅ No local setup required
 ---
 ## 🔗 Live Demo (Railway — No Setup)
